@@ -12,7 +12,7 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/php-backend/api/get_orders.php",
+        "http://localhost/AI_ECOMMERCEphp-backend/api/get_orders.php",
         { withCredentials: true }
       );
       if (response.data.status === "success") {
@@ -32,7 +32,7 @@ const Orders = () => {
   const handleDeleteOrder = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost/php-backend/api/delete_order.php?id=${id}`,
+        `http://localhost/AI_ECOMMERCE/php-backend/api/delete_order.php?id=${id}`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {
@@ -48,7 +48,7 @@ const Orders = () => {
   const handleViewDetails = async (orderId) => {
     try {
       const response = await axios.get(
-        `http://localhost/php-backend/api/get_order_details.php?id=${orderId}`,
+        `http://localhost/AI_ECOMMERCE/php-backend/api/get_order_details.php?id=${orderId}`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {

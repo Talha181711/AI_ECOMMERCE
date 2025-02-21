@@ -16,7 +16,7 @@ const AdminLogin = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost/php-backend/api/admin-login.php",
+        "http://localhost/AI_ECOMMERCE/php-backend/api/admin-login.php",
         { email, password },
         {
           headers: { "Content-Type": "application/json" },

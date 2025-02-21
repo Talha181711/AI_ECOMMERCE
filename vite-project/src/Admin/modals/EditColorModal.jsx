@@ -11,7 +11,7 @@ const EditColorModal = ({ color, onClose, onUpdated }) => {
   const handleUpdate = async () => {
     try {
       const response = await axios.put(
-        "http://localhost/php-backend/api/update_color.php",
+        "http://localhost/AI_ECOMMERCE/php-backend/api/update_color.php",
         { id: color.id, color_name: colorName },
         { withCredentials: true }
       );

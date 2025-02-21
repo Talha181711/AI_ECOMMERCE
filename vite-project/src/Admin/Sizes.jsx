@@ -13,7 +13,7 @@ const Sizes = () => {
   const fetchSizes = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/php-backend/api/get_sizes.php",
+        "http://localhost/AI_ECOMMERCE/php-backend/api/get_sizes.php",
         { withCredentials: true }
       );
       if (response.data.status === "success") {
@@ -33,7 +33,7 @@ const Sizes = () => {
   const handleDeleteSize = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost/php-backend/api/delete_size.php?id=${id}`,
+        `http://localhost/AI_ECOMMERCE/php-backend/api/delete_size.php?id=${id}`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {

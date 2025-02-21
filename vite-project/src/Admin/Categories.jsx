@@ -13,7 +13,7 @@ const Categories = () => {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/php-backend/api/get_categories.php",
+        "http://localhost/AI_ECOMMERCE/php-backend/api/get_categories.php",
         { withCredentials: true }
       );
       if (response.data.status === "success") {
@@ -33,7 +33,7 @@ const Categories = () => {
   const handleDeleteCategory = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost/php-backend/api/delete_category.php?id=${id}`,
+        `http://localhost/AI_ECOMMERCE/php-backend/api/delete_category.php?id=${id}`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {

@@ -8,7 +8,7 @@ const AddCategoryModal = ({ onClose, onAdded }) => {
   const handleAdd = async () => {
     try {
       const response = await axios.post(
-        "http://localhost/php-backend/api/add_category.php",
+        "http://localhost/AI_ECOMMERCE/php-backend/api/add_category.php",
         { category_name: categoryName },
         { withCredentials: true }
       );

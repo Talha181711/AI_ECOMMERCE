@@ -8,7 +8,7 @@ const ViewProductsPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/php-backend/api/get_products.php"
+          "http://localhost/AI_ECOMMERCE/php-backend/api/get_products.php"
         );
         if (response.data.status === "success") {
           setProducts(response.data.products);

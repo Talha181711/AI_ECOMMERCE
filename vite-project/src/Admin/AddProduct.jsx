@@ -24,7 +24,7 @@ const AddProduct = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost/php-backend/api/get_product_data.php")
+      .get("http://localhost/AI_ECOMMERCE/php-backend/api/get_product_data.php")
       .then((response) => {
         const { categories, subcategories, brands, sizes, colors } =
           response.data;
@@ -113,7 +113,7 @@ const AddProduct = () => {
       formData.append("variants", JSON.stringify(allVariants));
 
       const response = await axios.post(
-        "http://localhost/php-backend/api/add_product.php",
+        "http://localhost/AI_ECOMMERCE/php-backend/api/add_product.php",
         formData,
         {
           headers: {

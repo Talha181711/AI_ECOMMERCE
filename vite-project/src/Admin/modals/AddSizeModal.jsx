@@ -8,7 +8,7 @@ const AddSizeModal = ({ onClose, onAdded }) => {
   const handleAdd = async () => {
     try {
       const response = await axios.post(
-        "http://localhost/php-backend/api/add_size.php",
+        "http://localhost/AI_ECOMMERCE/php-backend/api/add_size.php",
         { size: sizeValue },
         { withCredentials: true }
       );
