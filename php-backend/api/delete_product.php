@@ -1,53 +1,45 @@
 <?php
-// delete_product.php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
+header('Content-Type: application/json');
 
-require_once '../config/db.php';
+include '../config/db.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request method']);
-    exit;
-}
-
-// Get JSON input
-$data = json_decode(file_get_contents("php://input"), true);
-
-if (!isset($data['id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Product ID is required']);
-    exit;
-}
-
-$productId = $data['id'];
+$response = ['success' => false, 'message' => ''];
 
 try {
-    // Fetch the image filename before deleting the product
-    $stmt = $conn->prepare("SELECT image FROM products WHERE id = ?");
-    $stmt->execute([$productId]);
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($product && !empty($product['image'])) {
-        $imagePath = "../uploads/" . $product['image'];
-
-        // Check if the file exists before attempting to delete
-        if (file_exists($imagePath)) {
-            unlink($imagePath); // Delete the file
-        }
+    if ($_SERVER['REQUEST_METHOD'] !== 'DELETE') {
+        throw new Exception("Invalid request method");
     }
 
-    // Delete the product from the database
-    $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
-    if ($stmt->execute([$productId])) {
-        echo json_encode(['status' => 'success', 'message' => 'Product and image deleted successfully']);
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to delete product']);
+    // Get product ID from query params
+    $productId = $_GET['id'] ?? null;
+    if (!$productId || !is_numeric($productId)) {
+        throw new Exception("Invalid product ID");
     }
+
+    $conn->beginTransaction();
+
+    // Delete images first
+    $imageStmt = $conn->prepare("DELETE FROM product_images WHERE product_id = ?");
+    $imageStmt->execute([$productId]);
+
+    // Delete variants
+    $variantStmt = $conn->prepare("DELETE FROM product_variants WHERE product_id = ?");
+    $variantStmt->execute([$productId]);
+
+    // Delete product
+    $productStmt = $conn->prepare("DELETE FROM products WHERE id = ?");
+    $productStmt->execute([$productId]);
+
+    $conn->commit();
+    $response = ['success' => true, 'message' => 'Product deleted successfully'];
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Failed to delete product', 'error' => $e->getMessage()]);
+    $conn->rollBack();
+    $response['message'] = $e->getMessage();
 }
+
+echo json_encode($response);
 ?>

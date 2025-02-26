@@ -1,4 +1,3 @@
-// src/Admin/Categories.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AddCategoryModal from "./modals/AddCategoryModal";
