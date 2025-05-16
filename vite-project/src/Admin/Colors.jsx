@@ -13,7 +13,7 @@ const Colors = () => {
   const fetchColors = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/get_colors.php",
+        `${import.meta.env.VITE_HOST_URL}/get_colors.php`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {
@@ -33,7 +33,7 @@ const Colors = () => {
   const handleDeleteColor = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost/AI_ECOMMERCE/php-backend/api/delete_color.php?id=${id}`,
+        `${import.meta.env.VITE_HOST_URL}/delete_color.php?id=${id}`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {

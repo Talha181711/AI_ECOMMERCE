@@ -10,7 +10,7 @@ const EditSubcategoryModal = ({ subcategory, onClose, onUpdated }) => {
   const handleUpdate = async () => {
     try {
       const response = await axios.put(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/update_subcategory.php",
+        `${import.meta.env.VITE_HOST_URL}/update_subcategory.php`,
         { id: subcategory.id, subcategory_name: subcategoryName },
         { withCredentials: true }
       );

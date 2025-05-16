@@ -1,50 +1,69 @@
 <?php
+// login.php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+// CORS & JSON headers
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Access-Control-Allow-Credentials: true");
-// Handle preflight (OPTIONS) requests
+header("Content-Type: application/json");
+
+// Handle preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
 session_start();
-require_once '../config/db.php';  // Ensure this file does not output anything!
+require_once '../config/db.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    // Validate that email and password exist
-    if (!isset($data['email'], $data['password'])) {
-        echo json_encode([
-            'status'  => 'error',
-            'message' => 'Email and password are required'
-        ]);
-        exit;
-    }
-
-    // Use a prepared statement with PDO
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$data['email']]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user && password_verify($data['password'], $user['password'])) {
-        // Set session variables for id, username, and email
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['email'] = $user['email'];
-
-        echo json_encode([
-            'status' => 'success',
-            'user'   => $user
-        ]);
-    } else {
-        echo json_encode([
-            'status'  => 'error',
-            'message' => 'Invalid credentials'
-        ]);
-    }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Method not allowed'
+    ]);
+    exit;
 }
-?>
+
+$input = json_decode(file_get_contents('php://input'), true);
+$email    = $input['email']    ?? '';
+$password = $input['password'] ?? '';
+
+if (!$email || !$password) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Email and password are required'
+    ]);
+    exit;
+}
+
+// Fetch user by email
+$stmt = $conn->prepare("SELECT id, username, email, password FROM users WHERE email = ?");
+$stmt->execute([$email]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user || !password_verify($password, $user['password'])) {
+    http_response_code(401);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid credentials'
+    ]);
+    exit;
+}
+
+// At this point credentials are valid: store in session
+$_SESSION['user'] = [
+    'id'       => $user['id'],
+    'username' => $user['username'],
+    'email'    => $user['email'],
+];
+
+// Return only safe user fields
+echo json_encode([
+    'success' => true,
+    'user'    => $_SESSION['user']
+]);
+exit;

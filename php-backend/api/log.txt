@@ -1,0 +1,60 @@
+[2025-05-13 09:46:55] RAW INPUT: Array
+(
+    [user_id] => 4
+    [product_id] => 7
+    [rating] => 4
+    [comment] => good quality
+)
+
+[2025-05-13 09:46:55] Parsed values:
+product_id: 7
+user_id: 4
+rating: 4
+comment: good quality
+[2025-05-13 09:46:55] SELECT executed. Rows: 0
+[2025-05-13 09:46:55] INSERT successful. Insert ID: 2
+[2025-05-14 15:58:21] RAW INPUT: Array
+(
+    [user_id] => 4
+    [product_id] => 7
+    [rating] => 3
+    [comment] => good quality
+)
+
+[2025-05-14 15:58:21] Parsed values:
+product_id: 7
+user_id: 4
+rating: 3
+comment: good quality
+[2025-05-14 15:58:21] SELECT executed. Rows: 0
+[2025-05-14 15:58:21] INSERT successful. Insert ID: 3
+[2025-05-14 15:59:40] RAW INPUT: Array
+(
+    [user_id] => 4
+    [product_id] => 7
+    [rating] => 3
+    [comment] => nice Quality
+)
+
+[2025-05-14 15:59:40] Parsed values:
+product_id: 7
+user_id: 4
+rating: 3
+comment: nice Quality
+[2025-05-14 15:59:40] SELECT executed. Rows: 0
+[2025-05-14 15:59:40] INSERT successful. Insert ID: 4
+[2025-05-14 16:05:45] RAW INPUT: Array
+(
+    [user_id] => 4
+    [product_id] => 7
+    [rating] => 5
+    [comment] => Exellent fabric and service
+)
+
+[2025-05-14 16:05:45] Parsed values:
+product_id: 7
+user_id: 4
+rating: 5
+comment: Exellent fabric and service
+[2025-05-14 16:05:45] SELECT executed. Rows: 0
+[2025-05-14 16:05:45] INSERT successful. Insert ID: 5

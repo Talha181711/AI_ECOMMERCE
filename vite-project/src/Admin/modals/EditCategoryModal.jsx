@@ -8,7 +8,7 @@ const EditCategoryModal = ({ category, onClose, onUpdated }) => {
   const handleUpdate = async () => {
     try {
       const response = await axios.put(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/update_category.php",
+        `${import.meta.env.VITE_HOST_URL}/update_category.php`,
         { id: category.id, category_name: categoryName },
         { withCredentials: true }
       );

@@ -15,7 +15,7 @@ const Subcategories = () => {
     try {
       // This endpoint returns all subcategories along with their parent category name.
       const response = await axios.get(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/get_subcategories.php",
+        `${import.meta.env.VITE_HOST_URL}/get_subcategories.php`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {
@@ -31,7 +31,7 @@ const Subcategories = () => {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/get_categories.php",
+        `${import.meta.env.VITE_HOST_URL}/get_categories.php`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {
@@ -52,7 +52,7 @@ const Subcategories = () => {
   const handleDeleteSubcategory = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost/AI_ECOMMERCE/php-backend/api/delete_subcategory.php?id=${id}`,
+        `${import.meta.env.VITE_HOST_URL}/delete_subcategory.php?id=${id}`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {

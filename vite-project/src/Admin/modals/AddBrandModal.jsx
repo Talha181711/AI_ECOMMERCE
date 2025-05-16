@@ -8,7 +8,7 @@ const AddBrandModal = ({ onClose, onAdded }) => {
   const handleAdd = async () => {
     try {
       const response = await axios.post(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/add_brand.php",
+        `${import.meta.env.VITE_HOST_URL}/add_brand.php`,
         { brand_name: brandName },
         { withCredentials: true }
       );

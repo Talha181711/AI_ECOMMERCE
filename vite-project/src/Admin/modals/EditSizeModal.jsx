@@ -8,7 +8,7 @@ const EditSizeModal = ({ size, onClose, onUpdated }) => {
   const handleUpdate = async () => {
     try {
       const response = await axios.put(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/update_size.php",
+        `${import.meta.env.VITE_HOST_URL}/update_size.php`,
         { id: size.id, size: sizeValue },
         { withCredentials: true }
       );

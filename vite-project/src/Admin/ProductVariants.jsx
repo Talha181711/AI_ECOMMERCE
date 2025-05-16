@@ -13,7 +13,9 @@ const ProductVariants = ({ productId, colors, sizes }) => {
     // Fetch variants for the given product
     axios
       .get(
-        `http://localhost/AI_ECOMMERCE/php-backend/api/get_product_variants.php?product_id=${productId}`,
+        `${
+          import.meta.env.VITE_HOST_URL
+        }/get_product_variants.php?product_id=${productId}`,
         { withCredentials: true }
       )
       .then((response) => {

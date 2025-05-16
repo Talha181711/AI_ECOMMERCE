@@ -1,0 +1,18 @@
+.card {
+  overflow: hidden;
+}
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+.transition {
+  transition: all 0.3s ease-in-out;
+}
+.stars span {
+  font-size: 24px;
+  cursor: pointer;
+  color: gray;
+}
+.review {
+  margin-bottom: 1rem;
+}

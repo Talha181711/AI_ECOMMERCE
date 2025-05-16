@@ -15,7 +15,7 @@ const UserProfile = () => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/php-backend/api/get_user_profile.php",
+          `${import.meta.env.VITE_HOST_URL}/get_user_profile.php`,
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
@@ -40,7 +40,7 @@ const UserProfile = () => {
     setTimeout(async () => {
       try {
         const response = await axios.post(
-          "http://localhost/php-backend/api/logout.php",
+          `${import.meta.env.VITE_HOST_URL}/logout.php`,
           {},
           { withCredentials: true }
         );

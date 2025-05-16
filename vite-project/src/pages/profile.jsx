@@ -12,7 +12,7 @@ const ProfilePage = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/php-backend/api/get_user.php",
+          `${import.meta.env.VITE_HOST_URL}/get_user.php`,
           {
             withCredentials: true,
           }

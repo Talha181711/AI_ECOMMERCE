@@ -1,38 +1,32 @@
-import React, { useState } from "react";
+// src/pages/Login.jsx
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
-const Login = () => {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
-    setSuccessMessage(""); // Clear previous success messages
-
+    setError("");
     try {
       const response = await axios.post(
-        "http://localhost/php-backend/api/login.php",
+        `${import.meta.env.VITE_HOST_URL}/login.php`,
         { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       const data = response.data;
-
-      if (data.status === "success") {
-        setSuccessMessage("Login successful!");
-        // Navigate to the UserProfile page after a short delay (e.g., 1 second)
-        setTimeout(() => {
-          navigate("/UserProfile");
-        }, 1000);
+      console.log("login response :", data);
+      if (data.success && data.user) {
+        login(data.user);
+        navigate("/UserProfile");
       } else {
-        setError(data.message);
+        setError(data.message || "Login failed");
       }
     } catch (err) {
       console.error("Error during login:", err);
@@ -41,29 +35,34 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="container my-4" style={{ maxWidth: 400 }}>
       <h2>Login</h2>
-      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="text-danger">{error}</p>}
       <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
+        <div className="mb-2">
+          <input
+            className="form-control"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <input
+            className="form-control"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button className="btn btn-primary w-100" type="submit">
+          Login
+        </button>
       </form>
     </div>
   );
-};
-
-export default Login;
+}

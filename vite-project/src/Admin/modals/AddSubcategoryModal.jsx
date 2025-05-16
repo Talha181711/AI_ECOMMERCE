@@ -17,7 +17,7 @@ const AddSubcategoryModal = ({ onClose, onAdded, categories }) => {
     }
     try {
       const response = await axios.post(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/add_subcategory.php",
+        `${import.meta.env.VITE_HOST_URL}/add_subcategory.php`,
         { category_id: selectedCategory, subcategory_name: subcategoryName },
         { withCredentials: true }
       );

@@ -29,11 +29,9 @@ const EditProduct = () => {
     const fetchData = async () => {
       try {
         const [dataRes, productRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_HOST_URL}/get_product_data.php`),
           axios.get(
-            "http://localhost/AI_ECOMMERCE/php-backend/api/get_product_data.php"
-          ),
-          axios.get(
-            `http://localhost/AI_ECOMMERCE/php-backend/api/get_products.php?id=${id}`
+            `${import.meta.env.VITE_HOST_URL}/get_products.php?id=${id}`
           ),
         ]);
 
@@ -191,7 +189,7 @@ const EditProduct = () => {
       formData.append("images_to_delete", JSON.stringify(imagesToDelete));
 
       const response = await axios.post(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/update_product.php",
+        `${import.meta.env.VITE_HOST_URL}/update_product.php`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

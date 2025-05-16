@@ -9,12 +9,12 @@ header("Access-Control-Allow-Credentials: true");
 session_start();
 require_once '../config/db.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (empty($_SESSION['user']['id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Not logged in']);
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user']['id'];
 
 // Execute the query using PDO
 $result = $conn->query("SELECT * FROM users WHERE id = $user_id");

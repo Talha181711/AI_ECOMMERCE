@@ -1,10 +1,13 @@
 import React from "react";
 import { Navbar, Nav, Container, Badge } from "react-bootstrap";
-import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { FiHeart, FiShoppingCart, FiUser } from "react-icons/fi"; // Sleek modern icons
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Header = () => {
+  const { cartCount } = useCart(); // Get live cart count from context
+
   return (
     <Navbar
       expand="lg"
@@ -34,29 +37,31 @@ const Header = () => {
                 to="/wishlist"
                 className="text-black position-relative"
               >
-                <FaHeart size={20} />
+                <FiHeart size={22} />
               </Nav.Link>
               <Nav.Link
                 as={NavLink}
                 to="/cart"
                 className="text-black position-relative"
               >
-                <FaShoppingCart size={20} />
-                <Badge
-                  bg="danger"
-                  pill
-                  className="position-absolute top-0 start-100 translate-middle"
-                >
-                  0
-                </Badge>
+                <FiShoppingCart size={22} />
+                {cartCount > 0 && (
+                  <Badge
+                    bg="danger"
+                    pill
+                    className="position-absolute top-0 start-100 translate-middle"
+                  >
+                    {cartCount}
+                  </Badge>
+                )}
               </Nav.Link>
             </div>
             <Nav.Link as={NavLink} to="/profile" className="text-black">
-              <FaUser size={20} />
+              <FiUser size={22} />
             </Nav.Link>
           </div>
 
-          {/* Navigation Links - Center on Desktop, Below on Mobile */}
+          {/* Navigation Links */}
           <Nav className="mx-auto text-center flex-column flex-lg-row mt-2 mt-lg-0">
             <Nav.Link
               as={NavLink}
@@ -68,11 +73,11 @@ const Header = () => {
             </Nav.Link>
             <Nav.Link
               as={NavLink}
-              to="/categories"
+              to="/shop"
               className="text-black"
               activeclassname="active"
             >
-              Categories
+              Shop
             </Nav.Link>
             <Nav.Link
               as={NavLink}
@@ -92,31 +97,33 @@ const Header = () => {
             </Nav.Link>
           </Nav>
 
-          {/* Cart, Wishlist, and User Profile - Desktop Icons */}
+          {/* Desktop Icons */}
           <div className="d-none d-lg-flex justify-content-end gap-3">
             <Nav.Link
               as={NavLink}
               to="/wishlist"
               className="text-black position-relative"
             >
-              <FaHeart size={20} />
+              <FiHeart size={22} />
             </Nav.Link>
             <Nav.Link
               as={NavLink}
               to="/cart"
               className="text-black position-relative"
             >
-              <FaShoppingCart size={20} />
-              <Badge
-                bg="danger"
-                pill
-                className="position-absolute top-0 start-100 translate-middle"
-              >
-                0
-              </Badge>
+              <FiShoppingCart size={22} />
+              {cartCount > 0 && (
+                <Badge
+                  bg="danger"
+                  pill
+                  className="position-absolute top-0 start-100 translate-middle"
+                >
+                  {cartCount}
+                </Badge>
+              )}
             </Nav.Link>
             <Nav.Link as={NavLink} to="/profile" className="text-black">
-              <FaUser size={20} />
+              <FiUser size={22} />
             </Nav.Link>
           </div>
         </Navbar.Collapse>

@@ -8,7 +8,7 @@ const EditBrandModal = ({ brand, onClose, onUpdated }) => {
   const handleUpdate = async () => {
     try {
       const response = await axios.put(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/update_brand.php",
+        `${import.meta.env.VITE_HOST_URL}/update_brand.php`,
         { id: brand.id, brand_name: brandName },
         { withCredentials: true }
       );

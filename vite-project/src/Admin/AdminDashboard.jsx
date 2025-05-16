@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     const fetchAdmin = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/AI_ECOMMERCE/php-backend/api/get_admin_profile.php",
+          `${import.meta.env.VITE_HOST_URL}/get_admin_profile.php`,
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
@@ -47,7 +47,7 @@ const AdminDashboard = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/admin_logout.php",
+        `${import.meta.env.VITE_HOST_URL}/admin_logout.php`,
         {},
         { withCredentials: true }
       );

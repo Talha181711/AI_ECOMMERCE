@@ -13,7 +13,7 @@ const Brands = () => {
   const fetchBrands = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/get_brands.php",
+        `${import.meta.env.VITE_HOST_URL}/get_brands.php`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {
@@ -33,7 +33,7 @@ const Brands = () => {
   const handleDeleteBrand = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost/AI_ECOMMERCE/php-backend/api/delete_brand.php?id=${id}`,
+        `${import.meta.env.VITE_HOST_URL}/delete_brand.php?id=${id}`,
         { withCredentials: true }
       );
       if (response.data.status === "success") {

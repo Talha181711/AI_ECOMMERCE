@@ -8,7 +8,7 @@ const AddColorModal = ({ onClose, onAdded }) => {
   const handleAdd = async () => {
     try {
       const response = await axios.post(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/add_color.php",
+        `${import.meta.env.VITE_HOST_URL}/add_color.php`,
         { color_name: colorName },
         { withCredentials: true }
       );

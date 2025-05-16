@@ -13,7 +13,7 @@ const ViewProducts = () => {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/get_products.php"
+        `${import.meta.env.VITE_HOST_URL}/get_products.php`
       );
       setProducts(response.data.products);
       setLoading(false);
@@ -27,7 +27,7 @@ const ViewProducts = () => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         await axios.delete(
-          `http://localhost/AI_ECOMMERCE/php-backend/api/delete_product.php?id=${productId}`
+          `${import.meta.env.VITE_HOST_URL}/delete_product.php?id=${productId}`
         );
         fetchProducts();
       } catch (error) {
@@ -54,7 +54,7 @@ const ViewProducts = () => {
               <div className="card-body">
                 <h5 className="card-title">{product.title}</h5>
                 <p className="card-text">{product.description}</p>
-                <p className="h5">₹{product.price}</p>
+                <p className="h5">Rs{product.price}</p>
                 <div className="mb-2">
                   <strong>Category:</strong> {product.category_name}
                   <br />

@@ -11,6 +11,12 @@ import AdminDashboard from "./Admin/AdminDashboard";
 import ViewProducts from "./Admin/ViewProducts";
 import AddProduct from "./Admin/AddProduct";
 import EditProduct from "./Admin/EditProduct";
+import Shop from "./pages/shop";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <div>
@@ -26,7 +32,12 @@ function App() {
         <Route path="/admin/add-product" element={<AddProduct />} />
         <Route path="/admin/view-products" element={<ViewProducts />} />
         <Route path="/edit-product/:id" element={<EditProduct />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }

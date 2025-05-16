@@ -14,12 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 session_start();
 require_once '../config/db.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (empty($_SESSION['user']['id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Not logged in']);
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user']['id'];
+
 
 try {
     // Fetch basic user information
@@ -38,9 +39,9 @@ try {
     $addresses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch order history
-    $stmt = $conn->prepare("SELECT * FROM orders WHERE user_id = ?");
-    $stmt->execute([$user_id]);
-    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // $stmt = $conn->prepare("SELECT * FROM orders WHERE user_id = ?");
+    // $stmt->execute([$user_id]);
+    // $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch wishlist items
     $stmt = $conn->prepare("SELECT * FROM wishlist WHERE user_id = ?");
@@ -48,9 +49,9 @@ try {
     $wishlist = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Fetch cart items
-    $stmt = $conn->prepare("SELECT * FROM cart WHERE user_id = ?");
-    $stmt->execute([$user_id]);
-    $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // $stmt = $conn->prepare("SELECT * FROM cart WHERE user_id = ?");
+    // $stmt->execute([$user_id]);
+    // $cart = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // (Optional) Fetch recently viewed items or other features
     // $stmt = $conn->prepare("SELECT * FROM recently_viewed WHERE user_id = ?");
@@ -61,9 +62,9 @@ try {
         'status'    => 'success',
         'user'      => $user,
         'addresses' => $addresses,
-        'orders'    => $orders,
+        // 'orders'    => $orders,
         'wishlist'  => $wishlist,
-        'cart'      => $cart,
+        // 'cart'      => $cart,
         // 'recently_viewed' => $recently_viewed
     ]);
 } catch (PDOException $e) {

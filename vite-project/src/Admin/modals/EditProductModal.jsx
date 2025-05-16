@@ -33,21 +33,18 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost/AI_ECOMMERCE/php-backend/api/edit_product.php",
+        `${import.meta.env.VITE_HOST_URL}/edit_product.php`,
         productData
       );
       const updatedProductId = response.data.product_id;
 
       for (const variant of variants) {
-        await axios.post(
-          "http://localhost/AI_ECOMMERCE/php-backend/api/edit_variant.php",
-          {
-            product_id: updatedProductId,
-            size: variant.size,
-            color: variant.color,
-            stock: variant.stock,
-          }
-        );
+        await axios.post(`${import.meta.env.VITE_HOST_URL}/edit_variant.php`, {
+          product_id: updatedProductId,
+          size: variant.size,
+          color: variant.color,
+          stock: variant.stock,
+        });
       }
 
       onUpdated();
