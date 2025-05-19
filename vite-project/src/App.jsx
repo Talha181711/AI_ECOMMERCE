@@ -15,6 +15,8 @@ import Shop from "./pages/shop";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import EmployeeLogin from "./Employee/EmployeeLogin";
+import EmployeeDashboard from "./Employee/EmployeeDashboard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
@@ -36,6 +38,9 @@ function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        {/* Employee Routes */}
+        <Route path="/employee/login" element={<EmployeeLogin />} />
+        <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>

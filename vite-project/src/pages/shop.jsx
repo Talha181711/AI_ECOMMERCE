@@ -8,10 +8,11 @@ export default function Shop() {
   const [filter, setFilter] = useState({
     categoryId: null,
     subcategoryId: null,
+    brandId: null,
   });
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9;
+  const itemsPerPage = 6;
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_HOST_URL}/get_products.php`)
@@ -28,8 +29,15 @@ export default function Shop() {
   }, [filter]);
 
   const filtered = products.filter((p) => {
-    if (filter.subcategoryId) return p.subcategory_id === filter.subcategoryId;
-    if (filter.categoryId) return p.category_id === filter.categoryId;
+    if (filter.brandId) {
+      return p.brand_id === filter.brandId;
+    }
+    if (filter.subcategoryId) {
+      return p.subcategory_id === filter.subcategoryId;
+    }
+    if (filter.categoryId) {
+      return p.category_id === filter.categoryId;
+    }
     return true;
   });
 
@@ -43,7 +51,7 @@ export default function Shop() {
 
   return (
     <div className="container-fluid">
-      <div className="row">
+      <div className="row justify-content-center">
         <Sidebar onSelectFilter={setFilter} />
 
         <main className="col-md-9">

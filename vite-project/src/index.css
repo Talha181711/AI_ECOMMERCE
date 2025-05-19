@@ -16,3 +16,38 @@
 .review {
   margin-bottom: 1rem;
 }
+.order-history-detail {
+  font-size: small;
+}
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+.orders-container {
+  padding: 20px;
+}
+
+.order-card {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.order-left,
+.order-right {
+  width: 100%;
+}
+.order-left {
+  order: 2;
+}
+.order-right {
+  text-align: end;
+  order: 1;
+}
+.order-actions {
+  margin-top: 10px;
+}

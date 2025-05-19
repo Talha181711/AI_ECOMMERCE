@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 
 const UserProfile = () => {
   const [profileData, setProfileData] = useState(null);
+  const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
   const [logoutSuccess, setLogoutSuccess] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("personal");
+  const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({ username: "", email: "" });
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -23,16 +25,41 @@ const UserProfile = () => {
         );
         if (response.data.status === "success") {
           setProfileData(response.data);
+          setFormData({
+            username: response.data.user.username,
+            email: response.data.user.email,
+          });
         } else {
           setError(response.data.message);
         }
       } catch (err) {
         setError("Failed to fetch profile data");
+      }
+    };
+
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_HOST_URL}/get_user_orders.php`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log(response.data);
+        if (response.data.success) {
+          setOrders(response.data.orders);
+        } else {
+          console.warn("Orders not found");
+        }
+      } catch (err) {
+        console.error("Failed to fetch orders");
       } finally {
         setLoading(false);
       }
     };
+
     fetchProfile();
+    fetchOrders();
   }, []);
 
   const handleLogout = async () => {
@@ -56,6 +83,39 @@ const UserProfile = () => {
     }, 1000);
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_HOST_URL}/update_user_profile.php`,
+        formData,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      if (response.data.status === "success") {
+        setProfileData((prevData) => ({
+          ...prevData,
+          user: {
+            ...prevData.user,
+            username: formData.username,
+            email: formData.email,
+          },
+        }));
+        setIsEditing(false);
+      } else {
+        setError(response.data.message);
+      }
+    } catch (err) {
+      setError("Failed to update profile data");
+    }
+  };
+
   if (loading)
     return <div className="text-center mt-5">Loading profile...</div>;
   if (error) return <div className="alert alert-danger">{error}</div>;
@@ -77,124 +137,118 @@ const UserProfile = () => {
         </button>
       </div>
 
-      <div className="row">
-        <div className="col-md-3">
-          <ul className="list-group">
-            {["personal", "addresses", "orders", "wishlist", "cart"].map(
-              (tab) => (
-                <li
-                  key={tab}
-                  className={`list-group-item ${
-                    selectedTab === tab ? "active" : ""
-                  }`}
-                  onClick={() => setSelectedTab(tab)}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </li>
-              )
-            )}
-          </ul>
-        </div>
-
-        <div className="col-md-9">
-          {selectedTab === "personal" && (
-            <div>
-              <h3>Personal Information</h3>
-              <table className="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Joined</th>
-                    <th>Operations</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{profileData.user.username}</td>
-                    <td>{profileData.user.email}</td>
-                    <td>{profileData.user.created_at}</td>
-                    <td>
-                      <FaEdit className="text-dark me-2" />
-                      <FaTrash className="text-danger" />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+      <div className="mb-4">
+        <h4>Personal Information</h4>
+        <div className="mb-3">
+          <label className="form-label">Username:</label>
+          {isEditing ? (
+            <input
+              type="text"
+              name="username"
+              className="form-control"
+              value={formData.username}
+              onChange={handleInputChange}
+            />
+          ) : (
+            <p>{profileData.user.username}</p>
           )}
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Email:</label>
+          {isEditing ? (
+            <input
+              type="email"
+              name="email"
+              className="form-control"
+              value={formData.email}
+              onChange={handleInputChange}
+            />
+          ) : (
+            <p>{profileData.user.email}</p>
+          )}
+        </div>
+        {isEditing ? (
+          <button className="btn btn-primary" onClick={handleSave}>
+            Save
+          </button>
+        ) : (
+          <button
+            className="btn btn-secondary"
+            onClick={() => setIsEditing(true)}
+          >
+            Edit
+          </button>
+        )}
+      </div>
 
-          {["addresses", "orders", "wishlist", "cart"].map(
-            (tab) =>
-              selectedTab === tab && (
-                <div key={tab}>
-                  <h3>{tab.charAt(0).toUpperCase() + tab.slice(1)}</h3>
-                  <table className="table table-bordered">
-                    <thead>
-                      <tr>
-                        {tab === "addresses" &&
-                          ["Street", "City", "State", "Zip", "Operations"].map(
-                            (col) => <th key={col}>{col}</th>
-                          )}
-                        {tab === "orders" &&
-                          [
-                            "Order ID",
-                            "Status",
-                            "Total Amount",
-                            "Order Date",
-                            "Operations",
-                          ].map((col) => <th key={col}>{col}</th>)}
-                        {["wishlist", "cart"].includes(tab) &&
-                          ["Product Name", "Price", "Operations"].map((col) => (
-                            <th key={col}>{col}</th>
-                          ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {profileData[tab] && profileData[tab].length > 0 ? (
-                        profileData[tab].map((item, index) => (
-                          <tr key={index}>
-                            {tab === "addresses" && (
-                              <>
-                                <td>{item.street}</td>
-                                <td>{item.city}</td>
-                                <td>{item.state}</td>
-                                <td>{item.zip}</td>
-                              </>
-                            )}
-                            {tab === "orders" && (
-                              <>
-                                <td>{item.id}</td>
-                                <td>{item.status}</td>
-                                <td>${item.total_amount}</td>
-                                <td>{item.created_at}</td>
-                              </>
-                            )}
-                            {["wishlist", "cart"].includes(tab) && (
-                              <>
-                                <td>{item.product_name}</td>
-                                <td>${item.price}</td>
-                              </>
-                            )}
-                            <td>
-                              <FaEdit className="text-dark me-2" />
-                              <FaTrash className="text-danger" />
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={5} className="text-center">
-                            No records found
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+      <div>
+        <h4>Order History</h4>
+        {orders.length > 0 ? (
+          <div className="d-flex flex-column gap-4">
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                className="p-4 bg-light rounded shadow-sm position-relative"
+              >
+                <div className="position-absolute top-0 end-0 mb-5 text-muted small">
+                  Order Date: {new Date(order.created_at).toLocaleDateString()}
                 </div>
-              )
-          )}
-        </div>
+
+                {order.items.map((item, index) => (
+                  <div
+                    key={index}
+                    className="d-flex align-items-start mb-3 border-bottom pb-3"
+                  >
+                    <img
+                      src={`${import.meta.env.VITE_UPLOADS_HOST_URL}/${
+                        item.product_image
+                      }`}
+                      alt={item.product_title}
+                      className="me-3 rounded"
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div className="flex-grow-1">
+                      <h6 className="mb-1">{item.product_title}</h6>
+                      <p className="mb-1 order-history-detail">
+                        Color: <strong>{item.color_name}</strong>
+                      </p>
+                      <p className="mb-1 order-history-detail">
+                        Size: <strong>{item.size_name}</strong>
+                      </p>
+                      <p className="mb-1 order-history-detail">
+                        Unit Price: <strong>${item.unit_price}</strong>
+                      </p>
+                      <p className="mb-1 order-history-detail">
+                        Quantity: <strong>{item.quantity}</strong>
+                      </p>
+                    </div>
+                    <div className="text-end">
+                      <p className="fw-bold mb-0">
+                        Subtotal: $
+                        {(item.unit_price * item.quantity).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="text-end mt-3">
+                  <span className="badge bg-secondary me-2">
+                    Status: {order.order_status}
+                  </span>
+                  <span className="fw-bold">
+                    Total: ${parseFloat(order.total_amount).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No orders found.</p>
+        )}
       </div>
 
       {showModal && (

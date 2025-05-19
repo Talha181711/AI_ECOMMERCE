@@ -7,6 +7,8 @@ import { CartContext } from "../context/CartContext";
 import axios from "axios";
 import StarRatings from "react-star-ratings";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -308,6 +310,13 @@ export default function ProductDetail() {
   // ── 9) Render ──
   return (
     <div className="container my-4">
+      <Link
+        to="/shop"
+        className="btn btn-outline-secondary mb-3 d-inline-flex align-items-center"
+      >
+        <FaArrowLeft className="me-2" />
+        Back to Shop
+      </Link>
       <h2 className="mb-4">{product.title}</h2>
       <div className="d-flex flex-column flex-md-row gap-4">
         {/* LEFT: Featured Image + Color Circles */}

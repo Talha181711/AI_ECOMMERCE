@@ -8,7 +8,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
 
   return (
     <nav>
-      <ul className="pagination">
+      <ul className="pagination justify-content-center">
         <li className={`page-item${currentPage === 1 ? " disabled" : ""}`}>
           <button
             className="page-link"

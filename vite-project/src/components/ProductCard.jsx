@@ -1,5 +1,4 @@
-// src/components/ProductCard.jsx
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import QuickViewModal from "../components/QuickViewModal";
 import { addToCart } from "../components/cart";
@@ -14,6 +13,32 @@ export default function ProductCard({ product }) {
       ? `${import.meta.env.VITE_UPLOADS_HOST_URL}/${images[0].image_url}`
       : "/placeholder.jpg";
   const [showModal, setShowModal] = useState(false);
+  const [averageRating, setAverageRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_HOST_URL}/get_reviews.php?product_id=${id}`
+        );
+        const data = await response.json();
+        if (data.success && data.reviews.length > 0) {
+          const total = data.reviews.reduce(
+            (sum, review) => sum + parseFloat(review.rating),
+            0
+          );
+          const avg = total / data.reviews.length;
+          setAverageRating(avg);
+          setReviewCount(data.reviews.length);
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+
+    fetchReviews();
+  }, [id]);
 
   const handleCardClick = (e) => {
     if (
@@ -26,7 +51,6 @@ export default function ProductCard({ product }) {
   };
 
   const handleAddToCart = async () => {
-    // If not logged in, redirect to login
     if (!currentUser) {
       navigate("/login");
       return;
@@ -51,6 +75,40 @@ export default function ProductCard({ product }) {
     }
   };
 
+  const renderStars = () => {
+    const fullStars = Math.floor(averageRating);
+    const halfStar = averageRating - fullStars >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+    const stars = [];
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(
+        <span key={`full-${i}`} className="text-warning">
+          &#9733;
+        </span>
+      );
+    }
+
+    if (halfStar) {
+      stars.push(
+        <span key="half" className="text-warning">
+          &#189;
+        </span>
+      );
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(
+        <span key={`empty-${i}`} className="text-muted">
+          &#9734;
+        </span>
+      );
+    }
+
+    return stars;
+  };
+
   return (
     <>
       <div
@@ -66,19 +124,16 @@ export default function ProductCard({ product }) {
         />
         <div className="card-body d-flex flex-column">
           <h5 className="card-title">{title}</h5>
-          <p className="card-text mb-4">Rs {parseFloat(price).toFixed(0)}</p>
-          <div className="d-flex gap-2 mt-auto">
+          <p className="card-text mb-2">Rs {parseFloat(price).toFixed(0)}</p>
+          <div className="mb-2">
+            {renderStars()} <small>({reviewCount})</small>
+          </div>
+          <div className="mt-auto">
             <button
-              className="btn btn-outline-secondary quick-view"
+              className="btn btn-outline-secondary quick-view w-100"
               onClick={() => setShowModal(true)}
             >
               Quick View
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={() => navigate(`/product/${id}`)}
-            >
-              View Product
             </button>
           </div>
         </div>

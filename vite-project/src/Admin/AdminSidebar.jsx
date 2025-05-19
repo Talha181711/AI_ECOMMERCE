@@ -67,6 +67,33 @@ const AdminSidebar = ({ selectedTab, setSelectedTab }) => {
       >
         Manage Sizes
       </button>
+      <button
+        type="button"
+        className={`list-group-item list-group-item-action ${
+          selectedTab === "add-employee" ? "active" : ""
+        }`}
+        onClick={() => setSelectedTab("add-employee")}
+      >
+        Add Employee
+      </button>
+      <button
+        type="button"
+        className={`list-group-item list-group-item-action ${
+          selectedTab === "view-employees" ? "active" : ""
+        }`}
+        onClick={() => setSelectedTab("view-employees")}
+      >
+        View Employees
+      </button>
+      <button
+        type="button"
+        className={`list-group-item list-group-item-action ${
+          selectedTab === "assign-orders" ? "active" : ""
+        }`}
+        onClick={() => setSelectedTab("assign-orders")}
+      >
+        Assign Orders
+      </button>
     </div>
   );
 };

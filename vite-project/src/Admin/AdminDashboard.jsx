@@ -10,6 +10,10 @@ import Products from "./Products";
 import Orders from "./Orders";
 import Colors from "./Colors";
 import Sizes from "./Sizes";
+import AddEmployee from "./AddEmployee";
+import ViewEmployees from "./ViewEmployees";
+import AssignOrders from "./AssignOrders";
+import AdminNotifications from "./AdminNotifications";
 
 const AdminDashboard = () => {
   const [selectedTab, setSelectedTab] = useState("categories");
@@ -17,30 +21,78 @@ const AdminDashboard = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [logoutSuccess, setLogoutSuccess] = useState(false);
+
+  // 🛎️ Notification state
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const navigate = useNavigate();
 
-  // Fetch admin details
-  useEffect(() => {
-    const fetchAdmin = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_HOST_URL}/get_admin_profile.php`,
-          {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true,
-          }
+  // 🔔 Fetch Notifications
+  const fetchNotifications = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_HOST_URL}/get_admin_notifications.php`,
+        { withCredentials: true }
+      );
+      if (res.data.status === "success") {
+        setNotifications(res.data.notifications);
+        const unread = res.data.notifications.filter(
+          (n) => n.read_status === 0
         );
-        if (response.data.status === "success" && response.data.admin) {
-          setAdmin(response.data.admin);
-        } else {
-          setError(response.data.message || "Failed to fetch admin details");
-        }
-      } catch (err) {
-        setError("Failed to fetch admin details");
-      } finally {
-        setLoading(false);
+        setUnreadCount(unread.length);
       }
-    };
+    } catch (err) {
+      console.error("Error fetching notifications", err);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_HOST_URL}/mark_admin_notifications_read.php`,
+        {},
+        { withCredentials: true }
+      );
+      setUnreadCount(0);
+      fetchNotifications();
+    } catch (err) {
+      console.error("Failed to mark as read", err);
+    }
+  };
+
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+    if (!showDropdown && unreadCount > 0) {
+      markAllAsRead();
+    }
+  };
+
+  // 🧑‍💼 Fetch admin details
+  const fetchAdmin = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_HOST_URL}/get_admin_profile.php`,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+      if (response.data.status === "success" && response.data.admin) {
+        setAdmin(response.data.admin);
+      } else {
+        setError(response.data.message || "Failed to fetch admin details");
+      }
+    } catch (err) {
+      setError("Failed to fetch admin details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
     fetchAdmin();
   }, []);
 
@@ -73,9 +125,15 @@ const AdminDashboard = () => {
       case "orders":
         return <Orders />;
       case "colors":
-        return <Colors />; // New case for managing colors
+        return <Colors />;
       case "sizes":
-        return <Sizes />; // New case for managing sizes
+        return <Sizes />;
+      case "add-employee":
+        return <AddEmployee />;
+      case "view-employees":
+        return <ViewEmployees />;
+      case "assign-orders":
+        return <AssignOrders />;
       default:
         return <Categories />;
     }
@@ -86,7 +144,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="container-fluid">
-      {/* Header with admin details and logout */}
+      {/* Header */}
       <div className="row bg-light p-3 mb-3 align-items-center">
         <div className="col-md-8">
           {admin && (
@@ -96,22 +154,28 @@ const AdminDashboard = () => {
             </div>
           )}
         </div>
-        <div className="col-md-4 text-end">
+        <div className="col-md-4 text-end d-flex justify-content-end align-items-center gap-3">
+          <AdminNotifications
+            notifications={notifications}
+            unreadCount={unreadCount}
+            showDropdown={showDropdown}
+            toggleDropdown={toggleDropdown}
+          />
           <button className="btn btn-danger" onClick={handleLogout}>
             Logout
           </button>
         </div>
       </div>
+
+      {/* Layout */}
       <div className="row">
-        {/* Sidebar */}
-        <div className="col-md-2">
+        <div className="col-lg-2 mb-md-5">
           <AdminSidebar
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
           />
         </div>
-        {/* Content Area */}
-        <div className="col-md-10">{renderContent()}</div>
+        <div className="col-lg-10">{renderContent()}</div>
       </div>
     </div>
   );

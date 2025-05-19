@@ -58,3 +58,18 @@ rating: 5
 comment: Exellent fabric and service
 [2025-05-14 16:05:45] SELECT executed. Rows: 0
 [2025-05-14 16:05:45] INSERT successful. Insert ID: 5
+[2025-05-17 09:15:18] RAW INPUT: Array
+(
+    [user_id] => 4
+    [product_id] => 16
+    [rating] => 3
+    [comment] => good quality and fabric awesome 
+)
+
+[2025-05-17 09:15:18] Parsed values:
+product_id: 16
+user_id: 4
+rating: 3
+comment: good quality and fabric awesome
+[2025-05-17 09:15:18] SELECT executed. Rows: 0
+[2025-05-17 09:15:18] INSERT successful. Insert ID: 6

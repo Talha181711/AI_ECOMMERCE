@@ -2,15 +2,19 @@ import React from "react";
 import { Navbar, Nav, Container, Badge } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useState } from "react";
 import { FiHeart, FiShoppingCart, FiUser } from "react-icons/fi"; // Sleek modern icons
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Header = () => {
   const { cartCount } = useCart(); // Get live cart count from context
+  const [expanded, setExpanded] = React.useState(false);
 
   return (
     <Navbar
       expand="lg"
+      expanded={expanded}
+      onToggle={() => setExpanded(!expanded)}
       className="bg-white"
       variant="light"
       sticky="top"
@@ -34,15 +38,10 @@ const Header = () => {
             <div className="d-flex gap-3">
               <Nav.Link
                 as={NavLink}
-                to="/wishlist"
-                className="text-black position-relative"
-              >
-                <FiHeart size={22} />
-              </Nav.Link>
-              <Nav.Link
-                as={NavLink}
                 to="/cart"
                 className="text-black position-relative"
+                activeclassname="active"
+                onClick={() => setExpanded(false)}
               >
                 <FiShoppingCart size={22} />
                 {cartCount > 0 && (
@@ -56,7 +55,13 @@ const Header = () => {
                 )}
               </Nav.Link>
             </div>
-            <Nav.Link as={NavLink} to="/profile" className="text-black">
+            <Nav.Link
+              as={NavLink}
+              to="/profile"
+              className="text-black"
+              activeclassname="active"
+              onClick={() => setExpanded(false)}
+            >
               <FiUser size={22} />
             </Nav.Link>
           </div>
@@ -68,6 +73,7 @@ const Header = () => {
               to="/"
               className="text-black"
               activeclassname="active"
+              onClick={() => setExpanded(false)}
             >
               Home
             </Nav.Link>
@@ -76,6 +82,7 @@ const Header = () => {
               to="/shop"
               className="text-black"
               activeclassname="active"
+              onClick={() => setExpanded(false)}
             >
               Shop
             </Nav.Link>
@@ -84,6 +91,7 @@ const Header = () => {
               to="/about"
               className="text-black"
               activeclassname="active"
+              onClick={() => setExpanded(false)}
             >
               About
             </Nav.Link>
@@ -92,6 +100,7 @@ const Header = () => {
               to="/contact"
               className="text-black"
               activeclassname="active"
+              onClick={() => setExpanded(false)}
             >
               Contact
             </Nav.Link>
@@ -99,13 +108,6 @@ const Header = () => {
 
           {/* Desktop Icons */}
           <div className="d-none d-lg-flex justify-content-end gap-3">
-            <Nav.Link
-              as={NavLink}
-              to="/wishlist"
-              className="text-black position-relative"
-            >
-              <FiHeart size={22} />
-            </Nav.Link>
             <Nav.Link
               as={NavLink}
               to="/cart"
