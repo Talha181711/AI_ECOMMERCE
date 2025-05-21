@@ -26,7 +26,7 @@ $role = $_GET['role'] ?? '';
 
 try {
     if ($role === 'warehouse') {
-        // ✅ Warehouse sees ALL Pending and Packed orders (no assignment logic)
+        // ✅ Warehouse sees ALL Pending and Packed orders
         $stmt = $conn->prepare("
             SELECT o.*, os.status_name
             FROM orders o
@@ -54,8 +54,39 @@ try {
     }
 
     $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // ✅ Fetch order_items for each order
+    foreach ($orders as &$order) {
+        $stmtItems = $conn->prepare("
+            SELECT 
+                oi.id,
+                oi.order_id,
+                oi.product_id,
+                oi.variant_id,
+                oi.quantity,
+                oi.unit_price,
+                p.title AS product_title,
+                pv.color_id,
+                pv.size_id,
+                pv.stock,
+                c.color_name,
+                s.size AS size_name,
+                pci.image_url AS product_image
+            FROM order_items oi
+            JOIN product_variants pv ON pv.id = oi.variant_id
+            JOIN products p ON p.id = pv.product_id
+            LEFT JOIN colors c ON c.id = pv.color_id
+            LEFT JOIN sizes s ON s.id = pv.size_id
+            LEFT JOIN product_images pci ON pci.product_id = pv.product_id AND pci.color_id = pv.color_id
+            WHERE oi.order_id = ?
+        ");
+        $stmtItems->execute([$order['id']]);
+        $order['items'] = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     echo json_encode(["status" => "success", "orders" => $orders]);
 
 } catch (Exception $e) {
     echo json_encode(["status" => "error", "message" => $e->getMessage()]);
 }
+?>

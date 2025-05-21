@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import QuickViewModal from "../components/QuickViewModal";
-import { addToCart } from "../components/cart";
 import { AuthContext } from "../context/AuthContext";
 
 export default function ProductCard({ product }) {
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const { id, title, price, images } = product;
+
   const imageUrl =
     images && images.length > 0
       ? `${import.meta.env.VITE_UPLOADS_HOST_URL}/${images[0].image_url}`
       : "/placeholder.jpg";
+
   const [showModal, setShowModal] = useState(false);
   const [averageRating, setAverageRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
@@ -40,39 +41,77 @@ export default function ProductCard({ product }) {
     fetchReviews();
   }, [id]);
 
-  const handleCardClick = (e) => {
+  const trackProductView = async (source) => {
+    console.log(`🔍 Tracking view from: ${source}`);
+    console.log("📦 Product ID:", id);
+
+    if (currentUser && currentUser.id) {
+      console.log("👤 Logged-in user ID:", currentUser.id);
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_HOST_URL}/track_view.php`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_id: currentUser.id,
+              product_id: id,
+            }),
+          }
+        );
+
+        const result = await res.json();
+        console.log("✅ Backend tracking response:", result);
+      } catch (err) {
+        console.error("❌ Backend tracking failed:", err);
+      }
+    } else {
+      console.log("👤 Guest user - using localStorage");
+
+      try {
+        const MAX_VIEWS = 20;
+        let viewed = JSON.parse(
+          localStorage.getItem("viewed_products") || "[]"
+        );
+
+        // Remove if already exists
+        viewed = viewed.filter((pid) => pid !== id);
+
+        // Add to front
+        viewed.unshift(id);
+
+        // Enforce size limit
+        if (viewed.length > MAX_VIEWS) {
+          viewed = viewed.slice(0, MAX_VIEWS);
+        }
+
+        localStorage.setItem("viewed_products", JSON.stringify(viewed));
+
+        console.log("📝 Updated LocalStorage viewed_products:", viewed);
+      } catch (err) {
+        console.error("❌ LocalStorage tracking failed:", err);
+      }
+    }
+  };
+
+  const handleCardClick = async (e) => {
     if (
       e.target.closest(".btn") ||
       e.target.closest(".quick-view") ||
       e.target.tagName === "BUTTON"
-    )
+    ) {
       return;
+    }
+
+    await trackProductView("card click");
     navigate(`/product/${id}`);
   };
 
-  const handleAddToCart = async () => {
-    if (!currentUser) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const data = await addToCart({
-        userId: currentUser.id,
-        productId: id,
-        variantId: null,
-        quantity: 1,
-        unitPrice: parseFloat(price),
-      });
-      if (data.success) {
-        navigate("/cart");
-      } else {
-        alert("Error adding to cart: " + data.message);
-      }
-    } catch (err) {
-      console.error("Add to cart failed", err);
-      alert("Failed to add to cart.");
-    }
+  const handleQuickView = async () => {
+    await trackProductView("quick view");
+    setShowModal(true);
   };
 
   const renderStars = () => {
@@ -108,6 +147,7 @@ export default function ProductCard({ product }) {
 
     return stars;
   };
+  console.log("image url", imageUrl);
 
   return (
     <>
@@ -131,7 +171,7 @@ export default function ProductCard({ product }) {
           <div className="mt-auto">
             <button
               className="btn btn-outline-secondary quick-view w-100"
-              onClick={() => setShowModal(true)}
+              onClick={handleQuickView}
             >
               Quick View
             </button>

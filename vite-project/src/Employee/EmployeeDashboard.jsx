@@ -7,9 +7,12 @@ import { FaBell } from "react-icons/fa";
 const EmployeeDashboard = () => {
   const [employee, setEmployee] = useState(null);
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -41,6 +44,7 @@ const EmployeeDashboard = () => {
       );
       if (res.data.status === "success") {
         setOrders(res.data.orders);
+        setFilteredOrders(res.data.orders);
       }
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -100,6 +104,42 @@ const EmployeeDashboard = () => {
     navigate("/employee/login");
   };
 
+  const toggleDropdown = async () => {
+    const newOpen = !dropdownOpen;
+    setDropdownOpen(newOpen);
+    if (newOpen) {
+      await fetchNotifications();
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    filterOrders(term, statusFilter);
+  };
+
+  const handleStatusChange = (e) => {
+    const status = e.target.value;
+    setStatusFilter(status);
+    filterOrders(searchTerm, status);
+  };
+
+  const filterOrders = (search, status) => {
+    let updated = [...orders];
+
+    if (search.trim() !== "") {
+      updated = updated.filter((order) =>
+        order.id.toString().includes(search.trim())
+      );
+    }
+
+    if (employee?.role_name === "warehouse" && status !== "") {
+      updated = updated.filter((order) => order.status === status);
+    }
+
+    setFilteredOrders(updated);
+  };
+
   useEffect(() => {
     fetchProfile();
 
@@ -111,7 +151,6 @@ const EmployeeDashboard = () => {
 
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Optional: Poll notification count every 30 seconds
     const interval = setInterval(() => {
       fetchNotificationCount();
     }, 30000);
@@ -121,15 +160,6 @@ const EmployeeDashboard = () => {
       clearInterval(interval);
     };
   }, []);
-
-  const toggleDropdown = async () => {
-    const newOpen = !dropdownOpen;
-    setDropdownOpen(newOpen);
-    if (newOpen) {
-      await fetchNotifications();
-      // Removed markAllAsRead() from here
-    }
-  };
 
   return (
     <div className="container mt-4">
@@ -142,7 +172,7 @@ const EmployeeDashboard = () => {
             </h3>
 
             <div className="d-flex align-items-center gap-3">
-              {/* Notification Bell Dropdown */}
+              {/* Notification Bell */}
               <div className="position-relative" ref={dropdownRef}>
                 <button
                   className="btn btn-outline-secondary position-relative"
@@ -177,7 +207,6 @@ const EmployeeDashboard = () => {
                           className="btn btn-sm btn-link text-primary"
                           onClick={async () => {
                             await markAllAsRead();
-                            setNotificationCount(0);
                           }}
                         >
                           Mark all as read
@@ -203,7 +232,7 @@ const EmployeeDashboard = () => {
                 )}
               </div>
 
-              {/* Logout Button */}
+              {/* Logout */}
               <button className="btn btn-danger" onClick={handleLogout}>
                 Logout
               </button>
@@ -212,15 +241,46 @@ const EmployeeDashboard = () => {
 
           <hr />
 
+          {/* Search and Filter Controls */}
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by Order ID"
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
+
+            {employee.role_name === "warehouse" && (
+              <div className="col-md-6">
+                <select
+                  className="form-control"
+                  value={statusFilter}
+                  onChange={handleStatusChange}
+                >
+                  <option value="">Filter by Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="packed">Packed</option>
+                </select>
+              </div>
+            )}
+          </div>
+
           {/* Order Cards */}
-          {orders.map((order) => (
-            <OrderCard
-              key={order.id}
-              order={order}
-              role={employee.role_name}
-              fetchOrders={() => fetchOrders(employee.role_name)}
-            />
-          ))}
+          {filteredOrders.length > 0 ? (
+            filteredOrders.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                role={employee.role_name}
+                fetchOrders={() => fetchOrders(employee.role_name)}
+              />
+            ))
+          ) : (
+            <p>No matching orders found.</p>
+          )}
         </>
       )}
     </div>

@@ -237,7 +237,7 @@ const UserProfile = () => {
 
                 <div className="text-end mt-3">
                   <span className="badge bg-secondary me-2">
-                    Status: {order.order_status}
+                    Status: {order.order_status_name}
                   </span>
                   <span className="fw-bold">
                     Total: ${parseFloat(order.total_amount).toFixed(2)}

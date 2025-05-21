@@ -20,6 +20,13 @@ export default function Checkout() {
   useEffect(() => {
     if (!currentUser?.id) return;
 
+    // Auto-fill name and email
+    setForm((prev) => ({
+      ...prev,
+      customer_name: currentUser.username || "",
+      customer_email: currentUser.email || "",
+    }));
+
     getCartItems(currentUser.id).then((data) => {
       if (data.success) setItems(data.items);
     });
@@ -37,9 +44,18 @@ export default function Checkout() {
       return;
     }
 
-    // Log form data and cart items
-    console.log("Form Data:", form);
-    console.log("Cart Items:", items);
+    // Validate required fields manually
+    const { customer_name, customer_email, customer_phone, shipping_address } =
+      form;
+    if (
+      !customer_name ||
+      !customer_email ||
+      !customer_phone ||
+      !shipping_address
+    ) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
 
     try {
       const res = await axios.post(
@@ -47,14 +63,14 @@ export default function Checkout() {
         {
           user_id: currentUser.id,
           ...form,
-          items, // Include cart items in the request
+          items,
         }
       );
 
       if (res.data.success) {
         toast.success("Order placed successfully!");
         updateCartCount();
-        // Redirect or clear form as needed
+        // Optionally clear form or redirect
       } else {
         toast.error(res.data.message || "Order placement failed.");
       }
@@ -87,13 +103,14 @@ export default function Checkout() {
               />
             </div>
             <div className="mb-3">
-              <label className="form-label">Email (optional)</label>
+              <label className="form-label">Email *</label>
               <input
                 type="email"
                 className="form-control"
                 name="customer_email"
                 value={form.customer_email}
                 onChange={handleChange}
+                required
               />
             </div>
             <div className="mb-3">
@@ -118,7 +135,7 @@ export default function Checkout() {
               ></textarea>
             </div>
             <div className="mb-3">
-              <label className="form-label">Order Notes</label>
+              <label className="form-label">Order Notes (Optional)</label>
               <textarea
                 className="form-control"
                 name="order_notes"

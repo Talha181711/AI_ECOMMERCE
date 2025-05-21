@@ -17,6 +17,12 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import EmployeeLogin from "./Employee/EmployeeLogin";
 import EmployeeDashboard from "./Employee/EmployeeDashboard";
+import MostViewedProducts from "./components/recommendations/MostViewedProducts";
+import PopularProducts from "./components/recommendations/PopularProducts";
+import RandomProducts from "./components/recommendations/RandomProducts";
+import RecentlyViewed from "./components/recommendations/RecentlyViewed";
+import SimilarProducts from "./components/recommendations/SimilarProducts";
+import TrendingProducts from "./components/recommendations/TrendingProducts";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
@@ -41,6 +47,12 @@ function App() {
         {/* Employee Routes */}
         <Route path="/employee/login" element={<EmployeeLogin />} />
         <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
+        <Route path="/MostViewProducts" element={<MostViewedProducts />} />
+        <Route path="/PopularProducts" element={<PopularProducts />} />
+        <Route path="/RandomProducts" element={<RandomProducts />} />
+        <Route path="/RecentlyViewed" element={<RecentlyViewed />} />
+        <Route path="/SimilarProducts" element={<SimilarProducts />} />
+        <Route path="/TrendingProducts" element={<TrendingProducts />} />
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} />
     </div>

@@ -1,0 +1,47 @@
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.carousel-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding: 1rem 0;
+  scrollbar-width: none;
+}
+
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+.product-slide {
+  flex: 0 0 auto;
+  width: 220px;
+  max-width: 100%;
+}
+
+.nav-btn {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  position: absolute;
+  top: 45%;
+  z-index: 2;
+  opacity: 0.8;
+}
+
+.nav-btn.left {
+  left: -20px;
+}
+
+.nav-btn.right {
+  right: -20px;
+}
